@@ -1,0 +1,116 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 18/08/2018, 12:17:20
+    Author     : Avell B155 FIRE
+*/
+
+.center {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.btn-block, input[type=button].btn-block, input[type=reset].btn-block, input[type=submit].btn-block {
+    width: 100%;
+}
+
+.btn-signin {
+    font-size: 1.4em;
+    padding: .45em 1.25em;
+}
+
+.btn-orange {
+    background-color: #ff8b22;
+    border-bottom: 3px solid #f87600;
+}
+
+.btn {
+    color: #fff;
+}
+
+.gblue {
+    color: #0fc2ec!important;
+}
+
+/* Alteracoes Ciro */
+body, html {
+    height: 100%;
+}
+
+.bg {
+    background-image: url("../images/maos.jpg");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.caption {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #000;
+}
+
+.caption span.border {
+  background-color: #111;
+  color: #fff;
+  padding: 18px;
+  font-size: 25px;
+  letter-spacing: 10px;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: lightgray;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: black;
+    color: white;
+}
+
+.active {
+    background-color: transparent;
+}
+
+.carousel-inner > .item > img,
+.carousel-inner > .item > a > img {
+    width: 70%;
+    margin: auto;
+    margin-top: 20%;
+}
+
+.frases {
+    margin-left: 45%;
+    text-align: justify;
+    font-style: italic;
+    height: 200px;
+    width: 400px;
+    color: black;
+}
+
+.creditos {
+    margin-left: 15%;
+    text-align: justify;    
+}
+

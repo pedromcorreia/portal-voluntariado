@@ -1,0 +1,21 @@
+.imgPreCadastro {
+    max-width:  400px;
+    max-height: 400px;
+}
+
+.img-container {
+    float: left;
+    width: 50.00%;
+    padding: 15px;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.centrar {
+    margin: auto;
+    width: 50%;
+}
