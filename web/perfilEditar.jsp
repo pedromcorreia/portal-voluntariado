@@ -24,10 +24,10 @@
                       <a id="FotoAltera" href="#" onclick="chooseFile();">
                           <c:choose>
                             <c:when test="${voluntario.foto != null}"> 
-                              <div id="perfilFoto"><img  src="images/Friends/<c:out value="${voluntario.foto}"/>" class="img-circle img-thumbnails"></div>
+                              <div id="preview"><img  src="images/Friends/<c:out value="${voluntario.foto}"/>" class="img-circle img-thumbnails"></div>
                             </c:when>
                             <c:otherwise>
-                              <div id="perfilFoto"><img  src="images/Friends/alterar.jpg" class="img-circle img-thumbnails"></div>
+                              <div id="preview"><img  src="images/Friends/alterar.jpg" class="img-circle img-thumbnails"></div>
                             </c:otherwise>
                           </c:choose>
                           <div id="perfilFotoAlt" style="display: none;"><img  src="images/Friends/alterar.jpg" class="img-circle img-thumbnails"></div>

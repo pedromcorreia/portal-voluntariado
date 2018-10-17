@@ -17,11 +17,11 @@ $(document).ready(function() {
     });
     
     $('#FotoAltera').mouseover(function(){
-        $('#perfilFoto').css("display", "none");
+        $('#preview').css("display", "none");
         $('#perfilFotoAlt').css("display", "block");
     });
     $('#FotoAltera').mouseleave(function(){
-        $('#perfilFoto').css("display", "block");
+        $('#preview').css("display", "block");
         $('#perfilFotoAlt').css("display", "none");
     });
     
