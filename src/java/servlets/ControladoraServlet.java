@@ -21,6 +21,9 @@ import model.Causa;
 import model.Cidade;
 import model.Endereco;
 import facade.Facade;
+import java.io.File;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.Part;
 import model.Habilidade;
 import model.Instituicao;
 import model.Oportunidade;
@@ -33,6 +36,10 @@ import model.Voluntario;
  * @author Ciro e Juan
  */
 @WebServlet(name = "ControladoraServlet", urlPatterns = {"/ControladoraServlet"})
+@MultipartConfig(fileSizeThreshold = 1024*1024*2, //2mB
+                 maxFileSize = 1024*1024*10, //10mB
+                 maxRequestSize = 1024*1024*50,
+                 location = "\\c:\\")
 public class ControladoraServlet extends HttpServlet {
 
     /**
@@ -486,7 +493,46 @@ public class ControladoraServlet extends HttpServlet {
                 request.setAttribute("estados", estados);
                 rd.forward(request, response);
                 break;
+            case "alterarVoluntarioFoto":
+                /* inicio arquivo*/
+                Part part = request.getPart("imagem");
+                String fileName = extractFileName(part);
+                //String savePath = "\\Users\\Ciro\\Documents\\NetBeansProjects\\tcc\\web\\images\\Post\\" + fileName;
+                String savePath = "\\Users\\Avell B155 FIRE.Avell-B155FIRE\\Documents\\GitHub\\portal-voluntariado\\web\\images\\Friends\\" + fileName;
+                //String savePath = "\\Android\\" + fileName;
+                //get real path. serverlet context
+                File fileSaveDir = new File(savePath);
+                part.write(savePath + File.separator);
+                //newPost.setImagem("c:"+savePath);
+                String armazenar = ".\\images\\Post\\"+fileName;
+                
+                usuarioId = (Integer)session.getAttribute("usuarioLogado");
+                u = Facade.consultarUsuarioId(usuarioId);
+                String tipo = Facade.consultaUsuarioTipo(u.getUsuario());
+                u.setTipo(tipo);
+                Facade.perfilFoto(u, fileName);
+                if("V".equals(tipo)){
+                    response.sendRedirect("ControladoraServlet?action=perfilVoluntario");
+                }
+                else if("I".equals(tipo)){
+                    response.sendRedirect("ControladoraServlet?action=perfilInstituicao");
+                }
+                /* termino arquivo*/
+                break;
         }
+    }
+    
+    private String extractFileName(Part part){
+        String contentDisp = part.getHeader("content-disposition");
+        String[] items = contentDisp.split(";");
+        
+        for(String s:items){
+            if(s.trim().startsWith("filename")){
+                System.out.println("o que está no s: " + s);
+                return s.substring(s.indexOf("=") +2, s.length()-1);
+            }
+        }
+        return "";
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

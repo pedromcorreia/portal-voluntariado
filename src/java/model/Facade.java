@@ -5,7 +5,7 @@
  */
 package model;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+//import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import dao.CausaDAO;
 import dao.CidadeDAO;
 import dao.EstadoDAO;
@@ -124,7 +124,7 @@ public class Facade {
 
     public static List<Habilidade> listarHabilidades() {
         HabilidadeDAO dao = new HabilidadeDAO();
-        List<Habilidade> habilidades = new ArrayList();
+        List<Habilidade> habilidades = new ArrayList<>();
         try {
             habilidades = dao.listaHabilidades();
         } catch (Exception ex){
@@ -160,7 +160,7 @@ public class Facade {
 
     public static List<Causa> listarCausas() {
         CausaDAO dao = new CausaDAO();
-        List<Causa> causas = new ArrayList();
+        List<Causa> causas = new ArrayList<>();
         try {
             causas = dao.listaCausas();
         } catch (Exception ex){
@@ -179,7 +179,7 @@ public class Facade {
         dao.inserirVoluntarioCausa(c, usuario);
     }
 
-    public static String getFileName(final Part part) {
+    /*public static String getFileName(final Part part) {
         final String partHeader = part.getHeader("content-disposition");
         LOGGER.log(Level.INFO, "Part Header = {0}", partHeader);
         for (String content : part.getHeader("content-disposition").split(";")) {
@@ -189,7 +189,7 @@ public class Facade {
             }
         }
         return null;
-    }
+    }*/
 
     public static void perfilFoto(Usuario u, String fileName) {
         UsuarioDAO dao = new UsuarioDAO();
@@ -198,14 +198,14 @@ public class Facade {
 
     public static List<UF> listarEstados() {
         EstadoDAO dao = new EstadoDAO();
-        List<UF> estados = new ArrayList();
+        List<UF> estados = new ArrayList<>();
         estados = dao.listaEstados();
         return estados;
     }
 
     public static List<Cidade> listarCidades(String uf) {
         CidadeDAO dao = new CidadeDAO();
-        List<Cidade> cidades = new ArrayList();
+        List<Cidade> cidades = new ArrayList<>();
         cidades = dao.listaCidades(uf);
         return cidades;
     }
@@ -242,7 +242,7 @@ public class Facade {
     }
 
     public static List<Voluntario> listaAmigos(Integer usuarioId) {
-        List<Voluntario> amigos = new ArrayList();
+        List<Voluntario> amigos = new ArrayList<>();
         VoluntarioDAO dao = new VoluntarioDAO();
         try {
             amigos = dao.listaAmigos(usuarioId);
@@ -253,7 +253,7 @@ public class Facade {
     }
     
     public static List<Instituicao> listaInstituicoes(Integer usuarioId) {
-        List<Instituicao> instituicoes = new ArrayList();
+        List<Instituicao> instituicoes = new ArrayList<>();
         InstituicaoDAO dao = new InstituicaoDAO();
         try {
             instituicoes = dao.listaInstituicoes(usuarioId);
