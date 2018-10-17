@@ -17,8 +17,7 @@
     <!-- Begin page content -->
     
     <div id="wrapper" class="wrapper-content">
-        <!--form id="dataPhoto" method="post" enctype="multipart/form-data"-->
-        <form action="ControladoraServletUpload?action=alterarVoluntarioFoto" method="POST" enctype="multipart/form-data">
+        <form action="ControladoraServlet?action=alterarVoluntarioFoto" method="POST" enctype="multipart/form-data">
             <div id="sidebar-wrapper">
                 <ul class="sidebar-nav"  style="margin-top:40px;">
                     <li class="img-profile-content">
