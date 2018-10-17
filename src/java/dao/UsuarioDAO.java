@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Causa;
 import model.Endereco;
-import model.Facade;
+import facade.Facade;
 import model.Habilidade;
 import model.Usuario;
 import model.Voluntario;

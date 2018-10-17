@@ -16,7 +16,7 @@ import java.util.List;
 import model.Causa;
 import model.Cidade;
 import model.Endereco;
-import model.Facade;
+import facade.Facade;
 import model.Habilidade;
 import model.UF;
 import model.Usuario;
@@ -474,6 +474,90 @@ public class VoluntarioDAO {
             } catch (SQLException ex){
                 System.out.println("Erro ao fechar conexão. Ex="+ex.getMessage());
             }               
+        }
+    }
+
+    public List<Voluntario> pesquisarVoluntarios(String vol_nome, String uf_sigla, Integer cidade_id, Integer causa_id, Integer habilidade_id) throws IOException {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<Voluntario> voluntarios = new ArrayList<>();
+        try{
+            connection = new ConnectionFactorySemProperties().getConnection();
+            String query = 
+            "select u.usuario\n" +
+            "from usuario u\n" +
+            "join voluntario v on v.usuario = u.usuario\n" +
+            "left join endereco e on e.usuario = u.usuario\n" +
+            "left join cidade c on c.cidade = e.cidade\n" +
+            "left join voluntariocausa vc on vc.usuario = u.usuario\n" +
+            "left join voluntariohabilidade vh on vh.usuario = u.usuario\n" + 
+            "where 1=1\n";
+            
+            if(vol_nome != null && !vol_nome.isEmpty()){
+                query += "and upper(v.nome) like upper(?)\n";
+            }
+            if(cidade_id != null){
+                query += "and e.cidade = ?\n";
+            }
+            if(uf_sigla != null && !uf_sigla.isEmpty()){
+                query += "and c.uf = ?\n";
+            }
+            if(causa_id != null){
+                query += "and vc.causa = ?\n";
+            }
+            if(habilidade_id != null){
+                query += "and vh.habilidade = ?\n";
+            }
+            
+            query += "group by u.usuario";
+            
+            stmt = connection.prepareStatement(query);
+            Integer i = 0;
+            if(vol_nome != null && !vol_nome.isEmpty()){
+                i++;
+                stmt.setString(i, '%' + vol_nome + '%');
+            }
+            if(cidade_id != null){
+                i++;
+                stmt.setInt(i, cidade_id);
+            }
+            if(uf_sigla != null && !uf_sigla.isEmpty()){
+                i++;
+                stmt.setString(i, uf_sigla);
+            }
+            if(causa_id != null){
+                i++;
+                stmt.setInt(i, causa_id);
+            }
+            if(habilidade_id != null){
+                i++;
+                stmt.setInt(i, habilidade_id);
+            }
+            rs = stmt.executeQuery();
+            while(rs.next()){
+                Voluntario vol = consultarVoluntario(rs.getInt("usuario"));           
+                voluntarios.add(vol);
+            } 
+            return voluntarios;
+        } catch (SQLException ex) {
+            throw new RuntimeException("Erro ao consultar usuario no banco de dados. Origem="+ex.getMessage());
+        } finally{
+            /*try{
+                rs.close();
+            } catch (SQLException ex){
+                System.out.println("Erro ao fechar result set. Ex="+ex.getMessage());
+            };
+            try{
+                stmt.close();
+            } catch (SQLException ex){
+                System.out.println("Erro ao fechar stmt. Ex="+ex.getMessage());
+            };
+            try{
+                connection.close();
+            } catch (SQLException ex){
+                System.out.println("Erro ao fechar conexão. Ex="+ex.getMessage());
+            };*/
         }
     }
 }
