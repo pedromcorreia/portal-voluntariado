@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.sql.Timestamp;
+
 /**
  *
  * @author pedro
@@ -45,5 +47,9 @@ public class Mensagem {
 
     public void setNotificacao(boolean notificacao) {
         this.notificacao = notificacao;
+    }
+
+    public void setHora_envio(Timestamp timestamp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

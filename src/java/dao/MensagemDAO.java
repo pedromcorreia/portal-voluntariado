@@ -26,7 +26,7 @@ public class MensagemDAO {
         ResultSet rs1 = null;
         try{
             connection = new ConnectionFactorySemProperties().getConnection();
-            String stmtConsultarMensagem = "select comunicado, notificacao, usuario_remetente"
+            String stmtConsultarMensagem = "select comunicado, notificacao, usuario_remetente, hora_envio"
                     + " from mensagem where usuario_destinatario = ?";
             stmt1 = connection.prepareStatement(stmtConsultarMensagem);
             stmt1.setInt(1, id);
@@ -38,6 +38,7 @@ public class MensagemDAO {
                 mensagem.setComunicado(rs1.getString("comunicado"));
                 mensagem.setNotificacao(rs1.getBoolean("notificacao"));
                 mensagem.setUsuario_remetente(rs1.getInt("usuario_remetente"));
+                mensagem.setHora_envio(rs1.getTimestamp("hora_envio"));
             }
             rs1.close();
             stmt1.close();
@@ -61,9 +62,9 @@ public class MensagemDAO {
         try{
             connection = new ConnectionFactorySemProperties().getConnection();
             String stmtConsultarMensagem = "INSERT INTO mensagem"
-                    + "(comunicado, notificacao, usuario_remetente, usuario_destinatario)"
+                    + "(comunicado, usuario_remetente, usuario_destinatario)"
                     + "VALUES"
-                    + "(?, true, ?, ?)";
+                    + "(?, ?, ?)";
             stmt1 = connection.prepareStatement(stmtConsultarMensagem);
             stmt1.setString(1, comunicado);
             stmt1.setInt(2, id_remetente);
