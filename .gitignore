@@ -19,7 +19,8 @@
 *.tar.gz
 *.rar
 
-/build
+/build/
+/nbproject/
 Documentacao/.DS_Store
 .DS_Store
 
