@@ -37,7 +37,7 @@ public class MensagemDAO {
                 Mensagem mensagem = new Mensagem();
                 mensagem.setComunicado(rs1.getString("comunicado"));
                 mensagem.setNotificacao(rs1.getBoolean("notificacao"));
-                mensagem.setUsuario_remetente(rs1.getString("usuario_remetente"));
+                mensagem.setUsuario_remetente(rs1.getInt("usuario_remetente"));
             }
             rs1.close();
             stmt1.close();
