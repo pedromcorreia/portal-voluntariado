@@ -20,7 +20,7 @@ import model.Mensagem;
  */
 public class MensagemDAO {
       
-    public List<Mensagem> listarMensagens(int id) throws SQLException, IOException {
+    public List<Mensagem> listarMensagens(int id) throws IOException {
         Connection connection = null;
         PreparedStatement stmt1 = null;
         ResultSet rs1 = null;
@@ -54,7 +54,7 @@ public class MensagemDAO {
         }
     }
      
-    public void enviarMensagem(int id_remetente, int id_destinatario, String comunicado)
+    public void inserirMensagem(int id_remetente, int id_destinatario, String comunicado)
             throws SQLException, IOException {
         Connection connection = null;
         PreparedStatement stmt1 = null;
@@ -84,7 +84,7 @@ public class MensagemDAO {
         }
     }
     
-    public void updateMensagem(int id_remetente, int id_mensagem)
+    public void atualizarMensagem(int id_remetente, int id_mensagem)
             throws SQLException, IOException {
         Connection connection = null;
         PreparedStatement stmt1 = null;
