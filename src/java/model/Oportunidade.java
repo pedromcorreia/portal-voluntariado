@@ -6,6 +6,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 public class Oportunidade implements Serializable {
     private int id, vagasTotal, cargaHorariaTotal;
-    private Date inicio, termino;
+    private Calendar inicio, termino;
     private char status, presencial;
     Post postPai;
     private Instituicao instituicao;
@@ -46,19 +47,19 @@ public class Oportunidade implements Serializable {
         this.cargaHorariaTotal = cargaHorariaTotal;
     }
 
-    public Date getInicio() {
+    public Calendar getInicio() {
         return inicio;
     }
 
-    public void setInicio(Date inicio) {
+    public void setInicio(Calendar inicio) {
         this.inicio = inicio;
     }
 
-    public Date getTermino() {
+    public Calendar getTermino() {
         return termino;
     }
 
-    public void setTermino(Date termino) {
+    public void setTermino(Calendar termino) {
         this.termino = termino;
     }
 

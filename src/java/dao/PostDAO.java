@@ -28,37 +28,49 @@ public class PostDAO {
     
     public Post inserirPost(Post p) throws IOException {
         Connection connection = null;
-        PreparedStatement stmt1 = null;
+        PreparedStatement stmt = null;
         Post post = new Post();
-        String stmtInserirPost = "INSERT INTO post (usuario, postpai, descricao, data, imagem) values (?, ?, ?, ?, ?)";
+        Post postAux = new Post();
+        Oportunidade op = new Oportunidade();
+        String query = "INSERT INTO post (usuario, postpai, descricao, data, imagem) values (?, ?, ?, ?, ?)";
         try{
             connection = new ConnectionFactorySemProperties().getConnection();
             
-            stmt1 = connection.prepareStatement(stmtInserirPost, Statement.RETURN_GENERATED_KEYS);
-            stmt1.setInt(1, p.getUsuario().getUsuario());
-            stmt1.setString(2, null);
-            stmt1.setString(3, p.getDescricao());
+            stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, p.getUsuario().getUsuario());
+            stmt.setString(2, null);
+            stmt.setString(3, p.getDescricao());
             Calendar cal = p.getData();
-            stmt1.setTimestamp(4, new java.sql.Timestamp(cal.getTimeInMillis()));
-            stmt1.setString(5, p.getImagem());
-            stmt1.execute();
+            stmt.setTimestamp(4, new java.sql.Timestamp(cal.getTimeInMillis()));
+            stmt.setString(5, p.getImagem());
+            stmt.execute();
 
-            try (ResultSet pk = stmt1.getGeneratedKeys()){
+            try (ResultSet pk = stmt.getGeneratedKeys()){
                 if (pk.next()) {
                     post.setId(pk.getInt(1));
+                    postAux.setId(pk.getInt(1));
                 }
                 else {
                     throw new SQLException("A inserção do post falhou, ID não obtida.");
                 }
             }
+            
+            if(p.getOportunidade() != null){
+                op = p.getOportunidade();
+                op.setPostPai(postAux);
+                op = FacadePost.inserirOportunidade(op);
+            }
+            
+            post.setOportunidade(op);
+            
             return post;
-        } 
+        }
         catch (SQLException ex) {
             throw new RuntimeException("Erro ao inserir post no banco de dados. Origem="+ex.getMessage());
         } 
         finally{
             try{
-                stmt1.close();
+                stmt.close();
             } catch (SQLException ex){
                 System.out.println("Erro ao fechar stmt. Ex="+ex.getMessage());
             }
@@ -157,66 +169,85 @@ public class PostDAO {
     }
     
     public Post consultarPost(Post p) throws IOException {
-        Connection connection = null;
-        PreparedStatement stmt1 = null;
-        ResultSet rs1 = null;
+        Connection connection = new ConnectionFactorySemProperties().getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Calendar cal = null;
+        String query = null;
+        Post post = new Post();
+        Oportunidade op = new Oportunidade();
+        Usuario usuario = new Usuario();
+        List<Comentario> comentarios;
         try{
-            String stmtConsultarPost = "select p.post, p.descricao, p.data, p.imagem, p.postpai, p.usuario,  \n" +
-                                        "c.curtidas, comentarios, coalesce(v.nome, i.razao) nome \n" +
-                                        "from post p  \n" +
-                                        "left join \n" +
-                                        "(select post, count(*) curtidas\n" +
-                                        "from curtirpost\n" +
-                                        "group by post) c\n" +
-                                        "on  p.post = c.post \n" +
-                                        "left join \n" +
-                                        "(select postpai, count(*) comentarios \n" +
-                                        "from post\n" +
-                                        "group by postpai) o\n" +
-                                        "on  p.post = o.postpai \n" +
-                                        "inner join usuario u \n" +
-                                        "on p.usuario = u.usuario \n" +
-                                        "left join voluntario v \n" +
-                                        "on u.usuario = v.usuario \n" +
-                                        "left join instituicao i \n" +
-                                        "on u.usuario = i.usuario \n" +
-                                        "where p.post = ? \n";
-            connection = new ConnectionFactorySemProperties().getConnection();
-            stmt1 = connection.prepareStatement(stmtConsultarPost);
-            stmt1.setInt(1, p.getId());
-            rs1 = stmt1.executeQuery();
-            Post post;
-            post = new Post();
-            if(rs1.next()){
-                post.setId(rs1.getInt("post"));
-                post.setDescricao(rs1.getString("descricao"));
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(rs1.getTimestamp("data"));
+            query = "select p.post, p.descricao, p.data, p.imagem, p.postpai, p.usuario,  \n" +
+                    "c.curtidas, comentarios, coalesce(v.nome, i.razao) nome, \n" +
+                    "op.oportunidade, op.vagas, op.presencial, op.inicio, op.termino, op.cargahoraria, op.status \n" +
+                    "from post p  \n" +
+                    "left join \n" +
+                    "(select post, count(*) curtidas\n" +
+                    "from curtirpost\n" +
+                    "group by post) c on  p.post = c.post \n" +
+                    "left join \n" +
+                    "(select postpai, count(*) comentarios \n" +
+                    "from post\n" +
+                    "group by postpai) o on  p.post = o.postpai \n" +
+                    "join usuario u on p.usuario = u.usuario \n" +
+                    "left join voluntario v on u.usuario = v.usuario \n" +
+                    "left join instituicao i on u.usuario = i.usuario \n" +
+                    "left join oportunidade op on op.post = p.post \n" +
+                    "where p.post = ? \n";
+            
+            stmt = connection.prepareStatement(query);
+            stmt.setInt(1, p.getId());
+            rs = stmt.executeQuery();
+            
+            if(rs.next()){
+                post.setId(rs.getInt("post"));
+                post.setDescricao(rs.getString("descricao"));
+                cal = Calendar.getInstance();
+                cal.setTime(rs.getTimestamp("data"));
                 post.setData(cal);
                 
-                Usuario usuario = new Usuario();
-                usuario.setUsuario(rs1.getInt("usuario"));
-                usuario.setNome(rs1.getString("nome"));               
+                usuario.setUsuario(rs.getInt("usuario"));
+                usuario.setNome(rs.getString("nome"));               
                 post.setUsuario(usuario);
-                
-                List<Comentario> comentarios;               
-                comentarios = FacadePost.listarComentariosPost(rs1.getInt("post"));
+                               
+                comentarios = FacadePost.listarComentariosPost(rs.getInt("post"));
                 post.setComentarios(comentarios);
                 
-                post.setQtdeCurtidas(rs1.getInt("curtidas"));
-                post.setQtdeComentarios(rs1.getInt("comentarios"));
+                post.setQtdeCurtidas(rs.getInt("curtidas"));
+                post.setQtdeComentarios(rs.getInt("comentarios"));
+                
+                post.setImagem(rs.getString("imagem"));
+                
+                if(rs.getInt("oportunidade")!=0){
+                    op.setId(rs.getInt("oportunidade"));
+                    op.setVagasTotal(rs.getInt("vagas"));
+                    op.setPresencial(rs.getString("presencial").charAt(0));
+                    cal = Calendar.getInstance();
+                    cal.setTime(rs.getTimestamp("inicio"));
+                    op.setInicio(cal);
+                    cal = Calendar.getInstance();
+                    cal.setTime(rs.getTimestamp("termino"));
+                    op.setTermino(cal);
+                    op.setCargaHorariaTotal(rs.getInt("cargahoraria"));
+                    op.setStatus(rs.getString("status").charAt(0));
+                    op.setPostPai(post);
+
+                    post.setOportunidade(op);
+                }
             } 
             return post;
         } catch (SQLException ex) {
             throw new RuntimeException("Erro ao consultar lista de posts no banco de dados. Origem="+ex.getMessage());
         } finally{
             try{
-                rs1.close();
+                rs.close();
             } catch (SQLException ex){
                 System.out.println("Erro ao fechar result set. Ex="+ex.getMessage());
             }
             try{
-                stmt1.close();
+                stmt.close();
             } catch (SQLException ex){
                 System.out.println("Erro ao fechar stmt. Ex="+ex.getMessage());
             }
@@ -352,6 +383,57 @@ public class PostDAO {
             }
         }
         
+    }
+
+    public Post atualizarPost(Post p) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        Oportunidade op = new Oportunidade();
+        String query =  "update post set \n" +
+                        "usuario = ?,\n" +
+                        "postpai = ?,\n" +
+                        "descricao = ?,\n" +
+                        "data = ?,\n" +
+                        "imagem = ?\n" +
+                        "where post  = ?";
+        try{
+            connection = new ConnectionFactorySemProperties().getConnection();
+            
+            stmt = connection.prepareStatement(query);
+            stmt.setInt(1, p.getUsuario().getUsuario());
+            stmt.setString(2, null);
+            stmt.setString(3, p.getDescricao());
+            Calendar cal = p.getData();
+            stmt.setTimestamp(4, new java.sql.Timestamp(cal.getTimeInMillis()));
+            stmt.setString(5, p.getImagem());
+            stmt.setInt(6, p.getId());
+            stmt.execute();
+            
+            if(p.getOportunidade() != null){
+                op = p.getOportunidade();
+                op.setPostPai(p);
+                op = FacadePost.inserirOportunidade(op);
+            }
+            
+            p.setOportunidade(op);
+            
+            return p;
+        }
+        catch (SQLException ex) {
+            throw new RuntimeException("Erro ao inserir post no banco de dados. Origem="+ex.getMessage());
+        } 
+        finally{
+            try{
+                stmt.close();
+            } catch (SQLException ex){
+                System.out.println("Erro ao fechar stmt. Ex="+ex.getMessage());
+            }
+            try{
+                connection.close();
+            } catch (SQLException ex){
+                System.out.println("Erro ao fechar conexão. Ex="+ex.getMessage());
+            }
+        }
     }
     
 }
