@@ -19,15 +19,19 @@
 <link rel="icon" href="images/favicon.png">
 <title>DayDay</title>
 <!-- Bootstrap core CSS -->
+<link href="./css/jquery-ui.css" rel="stylesheet">
 <link href="./css/bootstrap.min.css" rel="stylesheet">
 <link href="./css/font-awesome.4.6.1/css/font-awesome.min.css" rel="stylesheet">
 <link href="./css/animate.min.css" rel="stylesheet">
 <link href="./css/timeline.css" rel="stylesheet">
+
 <link href="./css/forms.css" rel="stylesheet">
 <link href="./css/buttons.css" rel="stylesheet">
+
 <script src="./js/jquery.1.11.1.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>
 <script src="./js/custom.js"></script>
+<script src="./js/jquery-ui.js"></script>
 <script src="./js/voluntarius.js"></script>
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>

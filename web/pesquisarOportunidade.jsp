@@ -92,11 +92,11 @@
 			  <c:forEach var="oportunidade" items="${oportunidades}">
                             <div class="col-md-3">
                                 <div class="contact-box center-version">
-                                  <a href="ControladoraServlet?action=perfilInstituicao&perfil=<c:out value="${oportunidade.id}" />">
+                                  <a href="ControladoraPost?action=visualizarOportunidade&postId=<c:out value="${oportunidade.postPai.id}" />">
 
                                     <c:choose>
-                                    <c:when test="${oportunidade.postPai.usuario.foto!=null}">    
-                                      <img alt="image" class="img-circle" src="images/Friends/<c:out value="${oportunidade.postPai.usuario.foto}" />" >
+                                    <c:when test="${oportunidade.postPai.imagem!=null}">    
+                                      <img alt="image" class="img-circle" src="images/Friends/<c:out value="${oportunidade.postPai.imagem}" />" >
                                     </c:when>
                                     <c:otherwise>
                                       <img alt="image" class="img-circle" src="images/Friends/fa-user.png" >

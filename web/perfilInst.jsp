@@ -32,6 +32,9 @@
                 <li class="active">
                     <a href="ControladoraServlet?action=voluntariosVisualizar">Voluntários</a>
                 </li>
+                <li class="active">
+                    <input type="button" class="btn btn-primary shiny" onclick="javascript:location.href='ControladoraPost?action=oportunidadeEditar'" value="Criar Oportunidade" />
+                </li>
                 </c:if>
             </ul>
         </div>

@@ -12,6 +12,8 @@ import dao.UsuarioDAO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.Part;
 import model.Comentario;
 import model.Oportunidade;
@@ -36,9 +38,10 @@ public class FacadePost {
     }
     
     public static Post inserirPost(Post post) throws IOException{
-        PostDAO postDAO = new PostDAO();
-        postDAO.inserirPost(post);
-        return null;
+        PostDAO dao = new PostDAO();
+        Post p = new Post();
+        p = dao.inserirPost(post);
+        return p;
     }
 
     public static List<Comentario> listarComentariosPost(int post) throws IOException {
@@ -73,5 +76,25 @@ public class FacadePost {
         oportunidade = oportunidadeDAO.consultarOportunidade(post);
         return oportunidade;
     }
-        
+
+    public static Post atualizarPost(Post post) {
+        PostDAO dao = new PostDAO();
+        Post p = new Post();
+        p = dao.atualizarPost(post);
+        return p;
+    }
+
+    public static Oportunidade inserirOportunidade(Oportunidade oportunidade) {
+        OportunidadeDAO dao = new OportunidadeDAO();
+        Oportunidade op = new Oportunidade();
+        try {
+            dao.excluirOportunidade(oportunidade.getPostPai().getId()); //só pode haver uma oportunidade vinculada a um post.
+            op = dao.inserirOportunidade(oportunidade);
+        } catch (IOException ex) {
+            Logger.getLogger(FacadePost.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return op;
+    }
+    
+    
 }

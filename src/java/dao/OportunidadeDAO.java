@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.List;
 import facade.FacadePost;
 import java.sql.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Instituicao;
 import model.Oportunidade;
 import model.Post;
@@ -31,6 +33,7 @@ public class OportunidadeDAO {
         Connection connection = null;
         PreparedStatement stmt1 = null;
         ResultSet rs1 = null;
+        Calendar cal = Calendar.getInstance();
         try{
             String stmtConsultarPost = "select u.foto, i.razao, p.descricao, o.*  \n" +
                                         "from post p\n" +
@@ -47,8 +50,10 @@ public class OportunidadeDAO {
                 o.setId(rs1.getInt("oportunidade"));
                 o.setVagasTotal(rs1.getInt("vagas"));
                 o.setPresencial(rs1.getString("presencial").charAt(0));
-                o.setInicio(rs1.getDate("inicio"));
-                o.setTermino(rs1.getDate("termino"));
+                cal.setTime(rs1.getDate("inicio"));
+                o.setInicio(cal);
+                cal.setTime(rs1.getDate("termino"));
+                o.setTermino(cal);
                 o.setCargaHorariaTotal(rs1.getInt("cargahoraria"));
                 o.setStatus(rs1.getString("status").charAt(0));
                 Post post = new Post();
@@ -180,7 +185,91 @@ public class OportunidadeDAO {
             };*/
         }
     }
-    
-    
+
+    public Oportunidade inserirOportunidade(Oportunidade op) throws IOException {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        Calendar cal;
+        String query = "insert into oportunidade (post, vagas, presencial, inicio, termino, cargahoraria, status) values(?, ?, ?, ?, ?, ?, ?)";
+        connection = new ConnectionFactorySemProperties().getConnection();
+
+        try {
+            stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, op.getPostPai().getId());
+            stmt.setInt(2, op.getVagasTotal());
+            stmt.setString(3, String.valueOf(op.getPresencial()));
+            cal = op.getInicio();
+            stmt.setTimestamp(4, new java.sql.Timestamp(cal.getTimeInMillis()));
+            cal = op.getTermino();
+            stmt.setTimestamp(5, new java.sql.Timestamp(cal.getTimeInMillis()));
+            stmt.setInt(6, op.getCargaHorariaTotal());
+            stmt.setString(7, String.valueOf(op.getStatus()));
+            stmt.execute();
+
+            try (ResultSet pk = stmt.getGeneratedKeys()){
+                if (pk.next()) {
+                    op.setId(pk.getInt(1));
+                }
+                else {
+                    throw new SQLException("A inserção da oportunidade falhou, ID não obtida.");
+                }
+            }
+            return op;
+        }
+        catch (SQLException ex){
+            throw new RuntimeException("Erro ao inserir post no banco de dados. Origem="+ex.getMessage());
+        }
+        finally{
+            try{
+                stmt.close();
+            } 
+            catch (SQLException ex){
+                System.out.println("Erro ao fechar stmt. Ex="+ex.getMessage());
+            }
+            try{
+                connection.close();
+            } 
+            catch (SQLException ex){
+                System.out.println("Erro ao fechar conexão. Ex="+ex.getMessage());
+            }
+        }
+    }
+
+    public void excluirOportunidade(int id) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        String query = "";
+
+        try {
+            connection = new ConnectionFactorySemProperties().getConnection();
             
+            query = "delete from oportunidadehabilidade where oportunidade in (select oportunidade from oportunidade where post = ?)";
+            stmt = connection.prepareStatement(query);
+            stmt.setInt(1, id);
+            stmt.execute();
+            
+            query = "delete from oportunidade where post = ?";
+            stmt = connection.prepareStatement(query);
+            stmt.setInt(1, id);
+            stmt.execute();
+        } 
+        catch (SQLException ex){
+            throw new RuntimeException("Erro ao inserir post no banco de dados. Origem="+ex.getMessage());
+        }
+        finally{
+            try{
+                stmt.close();
+            } 
+            catch (SQLException ex){
+                System.out.println("Erro ao fechar stmt. Ex="+ex.getMessage());
+            }
+            try{
+                connection.close();
+            } 
+            catch (SQLException ex){
+                System.out.println("Erro ao fechar conexão. Ex="+ex.getMessage());
+            }
+        }
+    }
+
 }
