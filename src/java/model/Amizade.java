@@ -15,6 +15,15 @@ public class Amizade {
     //Usuario uSolicitante;
     //Usuario uSolicitado;
     Usuario amigo;
+    private String nome_amigo;
+
+    public String getNome_amigo() {
+        return nome_amigo;
+    }
+
+    public void setNome_amigo(String nome_amigo) {
+        this.nome_amigo = nome_amigo;
+    }
     Calendar data;
     String status;
 

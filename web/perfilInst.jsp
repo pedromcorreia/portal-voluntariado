@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Perfil</title>
+        <title>Voluntarius -Perfil</title>
         <jsp:include page="cabecalho.jsp"/>
         <link href="./css/cover.css" rel="stylesheet">
         <link href="./css/sidebar_profile.css" rel="stylesheet">

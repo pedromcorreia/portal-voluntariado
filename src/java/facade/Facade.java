@@ -12,9 +12,12 @@ import dao.CidadeDAO;
 import dao.EstadoDAO;
 import dao.HabilidadeDAO;
 import dao.InstituicaoDAO;
+import dao.MensagemDAO;
 import dao.OportunidadeDAO;
 import dao.UsuarioDAO;
 import dao.VoluntarioDAO;
+import dao.AmizadeDAO;
+import dao.NotificacaoDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,10 +30,14 @@ import model.Cidade;
 import model.Endereco;
 import model.Habilidade;
 import model.Instituicao;
+import model.Mensagem;
 import model.Oportunidade;
 import model.UF;
 import model.Usuario;
 import model.Voluntario;
+import model.Amizade;
+import model.Notificacao;
+
 
 /**
  *
@@ -306,5 +313,74 @@ public class Facade {
             Logger.getLogger(Facade.class.getName()).log(Level.SEVERE, null, ex);
         }
         return oportunidades;
+    }
+    
+    public static List<Mensagem> listarMensagens(int id) {
+        List<Mensagem> listMensagem = new ArrayList<Mensagem>();
+        MensagemDAO  dao = new MensagemDAO();
+        try {
+            listMensagem = dao.listarMensagens(id);
+        } catch (IOException ex) {
+            Logger.getLogger(Facade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listMensagem;
+    }
+    
+    public static void inserirMensagem(int id_remetente, int id_destinatario, String comunicado) 
+            throws IOException, SQLException {
+        MensagemDAO dao = new MensagemDAO();
+        dao.inserirMensagem(id_remetente, id_destinatario, comunicado);
+    }
+    
+    public static void atualizarMensagem(int id_remetente, int id_mensagem) 
+            throws IOException, SQLException {
+        MensagemDAO dao = new MensagemDAO();
+        dao.atualizarMensagem(id_remetente, id_mensagem);
+    }
+    
+    public static List<Amizade> listarAmizades(int id) {
+        List<Amizade> listAmizade = new ArrayList<Amizade>();
+        AmizadeDAO  dao = new AmizadeDAO();
+        try {
+            listAmizade = dao.listarAmizades(id);
+        } catch (IOException ex) {
+            Logger.getLogger(Facade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listAmizade;
+    }
+    
+    public static void inserirAmizade(String nome_amigo, int id) 
+            throws IOException, SQLException {
+        AmizadeDAO dao = new AmizadeDAO();
+        dao.inserirAmigo(nome_amigo, id);
+    }
+    
+    public static void deletarAmigo(int id, String nome_amigo) 
+            throws IOException, SQLException {
+        AmizadeDAO dao = new AmizadeDAO();
+        dao.deletarAmigo(id, nome_amigo);
+    }
+    
+    public static List<Notificacao> listarNotificacoes(int id) {
+        List<Notificacao> listNotificacao = new ArrayList<Notificacao>();
+        NotificacaoDAO dao = new NotificacaoDAO();
+        try {
+            listNotificacao = dao.listarNotificacoes(id);
+        } catch (IOException ex) {
+            Logger.getLogger(Facade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listNotificacao;
+    }
+    
+    public static void inserirNotificacao(String flag, int id_destinatario) 
+            throws IOException, SQLException {
+        NotificacaoDAO dao = new NotificacaoDAO();
+        dao.inserirNotificacao(flag, id_destinatario);
+    }
+    
+    public static void deletarNotificacao(int id) 
+            throws IOException, SQLException {
+        NotificacaoDAO dao = new NotificacaoDAO();
+        dao.deletarNotificacao(id);
     }
 }

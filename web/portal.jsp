@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Voluntarius</title>
+        <title>Voluntarius - portal</title>
         <jsp:include page="cabecalho.jsp"/>
         <link href="./css/login_register.css" rel="stylesheet">
     </head>

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Voluntarius</title>
+        <title>Voluntarius - Pesquisar pessoa</title>
         <jsp:include page="cabecalho.jsp"/>
         <link href="./css/cover.css" rel="stylesheet">
         <link href="./css/friends.css" rel="stylesheet">

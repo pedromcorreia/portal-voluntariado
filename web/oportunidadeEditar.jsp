@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Editar Oportunidade</title>
+        <title>Voluntarius - Editar Oportunidade</title>
         <jsp:include page="cabecalho.jsp"/>
         <link href="./css/cover.css" rel="stylesheet">
         <link href="./css/sidebar_profile.css" rel="stylesheet">
