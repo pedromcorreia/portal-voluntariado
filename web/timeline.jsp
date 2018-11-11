@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Voluntarius</title>
+        <title>Voluntarius - timeline</title>
             <jsp:include page="cabecalho.jsp"/>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="./css/profile2.css" rel="stylesheet">
