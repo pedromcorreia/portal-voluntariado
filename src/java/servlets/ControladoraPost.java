@@ -19,8 +19,16 @@ import model.Comentario;
 import facade.Facade;
 import facade.FacadePost;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
+import model.Instituicao;
+import model.Oportunidade;
 import model.Post;
 import model.Usuario;
 
@@ -54,7 +62,15 @@ public class ControladoraPost extends HttpServlet {
         int usr = (Integer) session.getAttribute("usuarioLogado");
         usuario = Facade.consultarUsuarioId(usr);
         session.setAttribute("usuarioConectado", usuario);
-
+        Post post = new Post();
+        Post postPai = new Post();
+        Oportunidade opo = new Oportunidade();
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+        Date date;
+        Calendar cal = Calendar.getInstance();
+        Integer usuarioId;
+        Instituicao instituicaoLogada;
+        Calendar dataPost;
         
         switch (action) {
             case "timeline":
@@ -69,12 +85,10 @@ public class ControladoraPost extends HttpServlet {
                 //int usr = (int)session.getAttribute("usuarioLogado");
                 //usuario.setUsuario(usr);
                 
-                Post newPost = new Post();               
-
-                Calendar dataPost = Calendar.getInstance();
-                newPost.setData(dataPost);                
-                newPost.setDescricao(request.getParameter("post"));
-                newPost.setUsuario(usuario);
+                dataPost = Calendar.getInstance();
+                post.setData(dataPost);                
+                post.setDescricao(request.getParameter("post"));
+                post.setUsuario(usuario);
                 
 
                 /* inicio arquivo*/
@@ -86,10 +100,10 @@ public class ControladoraPost extends HttpServlet {
                 part.write(savePath + File.separator);
                 //newPost.setImagem("c:"+savePath);
                 String armazenar = ".\\images\\Post\\"+fileName;
-                newPost.setImagem(armazenar);
+                post.setImagem(armazenar);
                 /* termino arquivo*/                
                 
-                FacadePost.inserirPost(newPost);
+                FacadePost.inserirPost(post);
                 response.sendRedirect("ControladoraPost?action=timeline");
                 break;
             case "newcomment":
@@ -106,13 +120,119 @@ public class ControladoraPost extends HttpServlet {
                 
                 String postP;
                 postP = request.getParameter("id");
-                Post postPai = new Post();
+                
                 postPai.setId(Integer.parseInt(postP));
                 com.setPostPai(postPai);
                 
                 FacadePost.inserirComentario(com);
                 response.sendRedirect("ControladoraPost?action=timeline");
                 
+                break;
+            case "oportunidadeEditar":
+                rd = getServletContext().getRequestDispatcher("/oportunidadeEditar.jsp");
+                String postId = request.getParameter("postId");
+                if(postId != null){
+                    post.setId(Integer.parseInt(postId));
+                    post = FacadePost.consultarPost(post);
+                    request.setAttribute("post", post);
+                }
+                rd.forward(request, response);
+                break;
+            case "gravarOportunidade":
+                usuarioId = (Integer)session.getAttribute("usuarioLogado");
+                instituicaoLogada = Facade.consultarInstituicao(usuarioId);
+                
+                post.setUsuario(instituicaoLogada);
+                
+                String op = request.getParameter("oportunidadeId");
+                if(!op.isEmpty() && op != null){
+                    post.setId(Integer.parseInt(op));
+                }
+                
+                String descricao = request.getParameter("descricao");
+                post.setDescricao(descricao);
+                
+                String atualizaFoto = request.getParameter("alterouFoto");
+                if("S".equals(atualizaFoto)){
+                    part = request.getPart("imagem");
+                    fileName = extractFileName(part);
+                    savePath = "\\Users\\Avell B155 FIRE.Avell-B155FIRE\\Documents\\GitHub\\portal-voluntariado\\web\\images\\Friends\\" + fileName;
+                    fileSaveDir = new File(savePath);
+                    part.write(savePath + File.separator);
+                    post.setImagem(fileName);
+                }
+                else{
+                    post.setImagem(atualizaFoto);
+                }
+                
+                dataPost = Calendar.getInstance();
+                post.setData(dataPost);
+                
+                String presencial = request.getParameter("presencial");
+                opo.setPresencial(presencial.charAt(0));
+                
+                String dataIni = request.getParameter("dataIni");
+                if(!dataIni.isEmpty() && dataIni != null){
+                    try {
+                        date = formatoData.parse(dataIni);
+                        cal.setTime(date);
+                        opo.setInicio(cal);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(ControladoraPost.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                String dataFim = request.getParameter("dataFim");
+                if(!dataFim.isEmpty() && dataFim != null){
+                    try {
+                        Date date2 = formatoData.parse(dataFim);
+                        Calendar cal2 = Calendar.getInstance();
+                        cal2.setTime(date2);
+                        opo.setTermino(cal2);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(ControladoraPost.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                
+                String vagasTotal = request.getParameter("vagasTotal");
+                if(!vagasTotal.isEmpty() && vagasTotal != null){
+                    opo.setVagasTotal(Integer.parseInt(vagasTotal));
+                }
+                
+                String cargaHorariaTotal = request.getParameter("cargaHorariaTotal");
+                if(!cargaHorariaTotal.isEmpty() && cargaHorariaTotal != null){
+                    opo.setCargaHorariaTotal(Integer.parseInt(cargaHorariaTotal));
+                }
+                
+                String status = request.getParameter("status");
+                opo.setStatus(status.charAt(0));
+                
+                post.setOportunidade(opo);
+                
+                if(op.isEmpty() || op == null){
+                    post = FacadePost.inserirPost(post);
+                }
+                else{
+                    post = FacadePost.atualizarPost(post);
+                }
+        
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ControladoraPost.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        
+                response.sendRedirect("ControladoraPost?action=visualizarOportunidade&postId="+post.getId());
+                
+                break;
+            case "visualizarOportunidade":
+                postId = request.getParameter("postId");
+                post.setId(Integer.parseInt(postId));
+                post = FacadePost.consultarPost(post);
+                
+                rd = getServletContext().getRequestDispatcher("/oportunidade.jsp");
+                request.setAttribute("post", post);
+                rd.forward(request, response);
                 break;
         }
     }
