@@ -14,6 +14,15 @@ import java.sql.Timestamp;
 public class Mensagem {
     private int usuario_remetente, usuario_destinatario;
     private String comunicado;
+    private Timestamp hora_envio;
+
+    public Timestamp getHora_envio() {
+        return hora_envio;
+    }
+
+    public void setHora_envio(Timestamp hora_envio) {
+        this.hora_envio = hora_envio;
+    }
 
     public String getComunicado() {
         return comunicado;
@@ -49,7 +58,4 @@ public class Mensagem {
         this.notificacao = notificacao;
     }
 
-    public void setHora_envio(Timestamp timestamp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
